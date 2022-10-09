@@ -1,4 +1,5 @@
 .vscode/
+running/
 in.txt
 *.out
 *.exe
