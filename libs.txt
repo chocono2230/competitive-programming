@@ -1,0 +1,416 @@
+#include <bits/stdc++.h>
+using ll = long long;
+using namespace std;
+
+//コンビネーション
+ll calcNumOfCombination(ll n, ll r) {
+  ll num = 1;
+  for (ll i = 1; i <= r; i++) {
+    num = num * (n - i + 1) / i;
+  }
+  return num;
+}
+
+mint calcNumOfCombination_mint(mint n, mint r) {
+  mint num = 1;
+  for (mint i = 1; i.val() <= r.val(); i += 1) {
+    num = num * (n - i + 1) / i;
+  }
+  return num;
+}
+
+mint calcNumOfCombination_mint2(mint n, mint r) {
+  mint num = 1;
+  for (mint i = 1; i.x <= r.x; i.x++) {
+    num = num * (n - i + 1) / i;
+  }
+  return num;
+}
+
+//素因数分解
+map<ll, ll> prime_factorization(ll n) {
+  map<ll, ll> ans;
+  ll a = 2;
+  while (n >= a * a) {
+    if (n % a == 0) {
+      ans[a]++;
+      n /= a;
+    } else {
+      a++;
+    }
+  }
+  ans[n]++;
+
+  return ans;
+}
+
+set<int> make_prime_set(int lim) {
+  set<int> ps;
+  vector<bool> chk(lim + 1, true);
+  chk.at(0) = chk.at(1) = false;
+  rep2(i, 2, chk.size()) {
+    if (chk.at(i) == false) continue;
+    ps.insert(i);
+    for (int j = i + i; j < chk.size(); j += i) chk.at(j) = false;
+  }
+  return ps;
+}
+
+vector<bool> make_prime_bool_vec(int lim) {
+  vector<bool> chk(lim + 1, true);
+  chk.at(0) = chk.at(1) = false;
+  rep2(i, 2, chk.size()) {
+    if (chk.at(i) == false) continue;
+    for (int j = i + i; j < chk.size(); j += i) chk.at(j) = false;
+  }
+  return chk;
+}
+
+ll modPow(ll a, ll n, ll p) {
+  if (n == 0) return 1;  // 0乗にも対応する場合
+  if (n == 1) return a % p;
+  if (n % 2 == 1) return (a * modPow(a, n - 1, p)) % p;
+  long long t = modPow(a, n / 2, p);
+  return (t * t) % p;
+}
+
+// 拡張ユークリッド互除法。a*x+b*y = g となるx,y,gを返す。
+// 制約 a > b 返り値yの符号注意
+ll extgcd(ll a, ll b, ll &x, ll &y) {
+  if (b == 0) {
+    x = 1, y = 0;
+    return a;
+  }
+  ll g = extgcd(b, a % b, x, y);
+  ll xt = x;
+  x = y;
+  y = xt - a / b * y;
+  return g;
+}
+
+struct UnionFind {
+  vector<int> d;
+  UnionFind(int n) : d(n, -1) {}
+  int find(int x) {
+    if (d.at(x) < 0) return x;
+    return d.at(x) = find(d.at(x));
+  }
+  bool unite(int x, int y) {
+    x = find(x);
+    y = find(y);
+    if (x == y) return false;
+    if (d.at(x) > d.at(y)) swap(x, y);
+    d.at(x) += d.at(y);
+    d.at(y) = x;
+    return true;
+  }
+  bool same(int x, int y) { return find(x) == find(y); }
+  int size(int x) { return -d.at(find(x)); }
+};
+
+struct UnionFind_hv {
+  vector<int> d, weight;
+  UnionFind_hv(int n) : d(n, -1), weight(n, 0) {}
+  int find(int x) {
+    if (d.at(x) < 0) return x;
+    int ret = find(d.at(x));
+    weight.at(x) += weight.at(d.at(x));
+    return d.at(x) = ret;
+  }
+  int get_weight(int x) {
+    find(x);
+    return weight.at(x);
+  }
+  int diff(int x, int y) { return weight.at(y) - weight.at(x); }
+  bool unite(int x, int y, int w) {
+    w += weight.at(x);
+    w -= weight.at(y);
+    x = find(x);
+    y = find(y);
+    if (x == y) return false;
+    if (d.at(x) > d.at(y)) swap(x, y), w = -w;
+    d.at(x) += d.at(y);
+    d.at(y) = x;
+    weight.at(y) = w;
+    return true;
+  }
+  bool same(int x, int y) { return find(x) == find(y); }
+  int size(int x) { return -d.at(find(x)); }
+};
+
+// 点と線分の距離
+double pointline_distance(double x, double y, double x1, double y1, double x2,
+                          double y2) {
+  // PABの角が90度以上か？
+  auto fc = [](double ax, double ay, double bx, double by, double px,
+               double py) -> bool {
+    pair<double, double> ab(bx - ax, by - ay), ap(px - ax, py - ay);
+    double s = ab.first * ap.first + ab.second * ap.second;
+    return s < 0;
+  };
+  if (fc(x1, y1, x2, y2, x, y)) {
+    return hypot(x1 - x, y1 - y);
+  }
+  if (fc(x2, y2, x1, y1, x, y)) {
+    return hypot(x2 - x, y2 - y);
+  }
+  double ax = y2 - y1, ay = x2 - x1;
+  double d = fabs(ax * x - ay * y + x2 * y1 - y2 * x1);
+  d /= sqrt((ax * ax) + (ay * ay));
+  return d;
+}
+
+// 線分と線分の交差判定
+bool crossing_check(int ax, int ay, int bx, int by, int x1, int y1, int x2,
+                    int y2) {
+  auto fc = [](int ax, int ay, int bx, int by, int x1, int y1, int x2,
+               int y2) -> bool {
+    ll sa = (ll)(ax - bx) * (y1 - ay) + (ll)(ay - by) * (ax - x1);
+    ll sb = (ll)(ax - bx) * (y2 - ay) + (ll)(ay - by) * (ax - x2);
+    return sa * sb < 0;
+  };
+  if (fc(ax, ay, bx, by, x1, y1, x2, y2) &&
+      (fc(x1, y1, x2, y2, ax, ay, bx, by)))
+    return true;
+  return false;
+};
+
+// 線分と線分の距離（依存:線分と線分の交差判定）
+double lineline_distance(int ax, int ay, int bx, int by, int x1, int y1, int x2,
+                         int y2) {
+  if (crossing_check(ax, ay, bx, by, x1, y1, x2, y2)) return 0;
+  double res = pointline_distance(ax, ay, x1, y1, x2, y2);
+  res = min(res, pointline_distance(bx, by, x1, y1, x2, y2));
+  res = min(res, pointline_distance(x1, y1, ax, ay, bx, by));
+  res = min(res, pointline_distance(x2, y2, ax, ay, bx, by));
+  return res;
+}
+
+//ダイクストラ法(O(Elog(V)))
+void dijkstra(vector<vector<pair<int, int>>> &gr, vector<ll> &d, int st) {
+  int n = d.size();
+  vector<bool> chk(n, false);
+  rep(i, d.size()) d.at(i) = INF;
+  priority_queue<pair<ll, int>> q;
+  q.push({0, st});
+  int co = 0;
+  while (!q.empty()) {
+    auto [cost, now] = q.top();
+    q.pop();
+    if (chk.at(now) == true) continue;
+    cost *= -1;
+    d.at(now) = cost;
+    chk.at(now) = true;
+    co++;
+    if (co == n) break;
+    for (auto [nx, nxcost] : gr.at(now)) {
+      if (chk.at(nx) == true || d.at(nx) <= (cost + nxcost)) continue;
+      q.push({-1 * (cost + nxcost), nx});
+      d.at(nx) = cost + nxcost;
+    }
+  }
+}
+
+// LCS(最長共通部分列)
+int LCS(string a, string b) {
+  vector<vector<int>> dp(b.size() + 1, vector<int>(a.size() + 1));
+  rep(i, b.size() + 1) {
+    rep(j, a.size() + 1) {
+      if (i == 0 || j == 0) {
+        dp.at(i).at(j) = 0;
+        continue;
+      }
+      if (a.at(j - 1) == b.at(i - 1))
+        dp.at(i).at(j) = dp.at(i - 1).at(j - 1) + 1;
+      else
+        dp.at(i).at(j) = max(dp.at(i - 1).at(j), dp.at(i).at(j - 1));
+    }
+  }
+  return dp.at(b.size()).at(a.size());
+}
+
+struct FenwickTree {  //入力は0インデックス
+  vector<ll> d;
+  FenwickTree(int n) : d(n, 0) {}
+  bool _addD(int index, ll add) {
+    if (index - 1 < 0 || index - 1 >= (int)d.size()) return false;
+    d.at(index - 1) += add;
+    return true;
+  }
+  void add(int index, int n) {
+    index++;
+    while (index != 0) {
+      bool ret = _addD(index, n);
+      if (ret == false) break;
+      index += index & (-index);
+    }
+  }
+  ll refer(int index) {
+    index++;
+    ll ret = 0;
+    while (index != 0) {
+      if (index > (int)d.size() || index <= 0) break;
+      ret += d.at(index - 1);
+      index -= index & (-index);
+    }
+    return ret;
+  }
+  ll refer(int l, int r) {  //[l, r]
+    return refer(r) - refer(l - 1);
+  }
+};
+
+// auto mod int
+// https://youtu.be/L8grWxBlIZ4?t=9858
+// https://youtu.be/ERZuLAxZffQ?t=4807 : optimize
+// https://youtu.be/8uowVvQ_-Mo?t=1329 : division
+const int mod = 1000000007;
+struct mint {
+  ll x;  // typedef long long ll;
+  mint(ll x = 0) : x((x % mod + mod) % mod) {}
+  mint operator-() const { return mint(-x); }
+  mint &operator+=(const mint a) {
+    if ((x += a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint &operator-=(const mint a) {
+    if ((x += mod - a.x) >= mod) x -= mod;
+    return *this;
+  }
+  mint &operator*=(const mint a) {
+    (x *= a.x) %= mod;
+    return *this;
+  }
+  mint operator+(const mint a) const {
+    mint res(*this);
+    return res += a;
+  }
+  mint operator-(const mint a) const {
+    mint res(*this);
+    return res -= a;
+  }
+  mint operator*(const mint a) const {
+    mint res(*this);
+    return res *= a;
+  }
+  mint pow(ll t) const {
+    if (!t) return 1;
+    mint a = pow(t >> 1);
+    a *= a;
+    if (t & 1) a *= *this;
+    return a;
+  }
+
+  // for prime mod
+  mint inv() const { return pow(mod - 2); }
+  mint &operator/=(const mint a) { return (*this) *= a.inv(); }
+  mint operator/(const mint a) const {
+    mint res(*this);
+    return res /= a;
+  }
+};
+
+struct combination {
+  vector<mint> fact, ifact;
+  combination(int n) : fact(n + 1), ifact(n + 1) {
+    assert(n < mod);
+    fact[0] = 1;
+    for (int i = 1; i <= n; ++i) fact[i] = fact[i - 1] * i;
+    ifact[n] = fact[n].inv();
+    for (int i = n; i >= 1; --i) ifact[i - 1] = ifact[i] * i;
+  }
+  mint operator()(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    return fact[n] * ifact[k] * ifact[n - k];
+  }
+};
+
+LCAセット(30固定) {
+  void dfs(vector<vector<int>> & tree, vector<vector<int>> & par,
+           vector<int> & lv, int now) {
+    for (auto nx : tree.at(now)) {
+      if (lv.at(nx) != -1) continue;
+      lv.at(nx) = lv.at(now) + 1;
+      par.at(0).at(nx) = now;
+      dfs(tree, par, lv, nx);
+    }
+  }
+
+  int lca(vector<int> & dlv, vector<vector<int>> & par, int u, int v) {
+    const int SZ = 30;
+    if (dlv.at(u) < dlv.at(v)) swap(u, v);
+    rep(i, SZ) {
+      if (((dlv.at(u) - dlv.at(v)) & (1 << i)) != 0) {
+        u = par.at(i).at(u);
+      }
+    }
+    if (u == v) return u;
+    rrep(i, SZ) {
+      if (par.at(i).at(u) != par.at(i).at(v)) {
+        u = par.at(i).at(u);
+        v = par.at(i).at(v);
+      }
+    }
+    return par.at(0).at(u);
+  }
+  main {
+    vector<int> lv(n, -1);
+    vector par(30, vector<int>(n, -1));
+    lv.at(0) = 0;
+    dfs(tree, par, lv, 0);
+    rep(i, 29) {
+      rep(now, n) {
+        if (par.at(i).at(now) < 0)
+          par.at(i + 1).at(now) = -1;
+        else
+          par.at(i + 1).at(now) = par.at(i).at(par.at(i).at(now));
+      }
+    }
+  }
+}
+
+// z=yyyymmddx
+unsigned long xor128() {
+  static unsigned long x = 123456789, y = 362436069, z = 111100000,
+                       w = 64813216;
+  unsigned long t = (x ^ (x << 11));
+  x = y;
+  y = z;
+  z = w;
+  return (w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)));
+}
+
+const clock_t start_time = clock();
+double time_from_clock() {
+  return (double)(clock() - start_time) / CLOCKS_PER_SEC;
+}
+
+const double temp_start = 100;
+const double temp_end = 1;
+double now_time = time_from_clock();
+double loop_start_time = time_from_clock();
+double loop_end_time = 4.95;
+double dist_now_time = (now_time - loop_start_time) / loop_time;
+double temp_now = temp_start * (1 - dist_now_time) + temp_end * (dist_now_time);
+
+int nxpoint = point_calc();
+int bfpoint = point_calc();
+double p = exp((nxpoint - bfpoint) / temp_now);
+if (p > (xor128() % INF) / (double)INF) {
+  ans = nxans;
+  make_graph(gr, n, ans);
+}
+
+vector spans(0, vector<tuple<int, int, int, int>>());
+double spans_addtime = 0;
+int fnamecount = 0;
+for (auto &v : spans) {
+  FILE *fp;
+  fnamecount++;
+  string fname = "out" + to_string(fnamecount) + ".txt";
+  fp = fopen(fname.c_str(), "w");
+  for (auto [a, b, c, d] : v) {
+    fprintf(fp, "%d %d %d %d\n", a, b, c, d);
+  }
+  fclose(fp);
+}
