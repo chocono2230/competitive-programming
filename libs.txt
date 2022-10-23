@@ -229,6 +229,19 @@ int LCS(string a, string b) {
   return dp.at(b.size()).at(a.size());
 }
 
+// 分数
+struct frac {
+  ll top = 0, btm = 1;
+  frac(ll top, ll btm) : top(top), btm(btm) {}
+  frac() {}
+  friend bool operator<(const frac &l, const frac &r) {
+    return l.top * r.btm < r.top * l.btm;
+  }
+  friend bool operator==(const frac &l, const frac &r) {
+    return l.top * r.btm == r.top * l.btm;
+  }
+};
+
 struct FenwickTree {  //入力は0インデックス
   vector<ll> d;
   FenwickTree(int n) : d(n, 0) {}
