@@ -1,5 +1,6 @@
 .vscode/
 running/
+ac-library/
 in.txt
 *.out
 *.exe
