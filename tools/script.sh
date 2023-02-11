@@ -1,6 +1,6 @@
 # 競プロ用各種コマンド
 
-function f_ccp() {
+function ccp() {
     if [ $# != 2 ]; then
         echo 引数エラー: $# args
         return
@@ -13,7 +13,7 @@ function f_ccp() {
     code $ff
 }
 
-function f_msenv() {
+function msenv() {
     export DEV_DY=$1
     export DEV_VC=$2
     echo DEV_DY is $DEV_DY
@@ -21,12 +21,12 @@ function f_msenv() {
     echo "VC_1 忘れずに"
 }
 
-function f_clean() {
+function clean() {
     rm */a.out
     rm */in.txt
 }
 
-function f_mkcd() {
+function mkcd() {
     if [ -z $DEV_DY ]; then
         echo DEV_DY Error
         return
@@ -49,7 +49,7 @@ function f_mkcd() {
     code $ff
 }
 
-function f_mkcdh() {
+function mkcdh() {
     if [ -z $DEV_DY ]; then
         echo DEV_DY Error
         return
@@ -75,8 +75,3 @@ function f_mkcdh() {
 alias c='code'
 alias g='g++ -std=gnu++17 -Wall -Wextra -O2 -DCHOMONOLIS_LOCAL $1'
 alias z='./a.out < in.txt'
-alias ccp='f_ccp'
-alias msenv='f_msenv'
-alias clean='f_clean'
-alias mkcd='f_mkcd'
-alias mkcdh='f_mkcdh'
