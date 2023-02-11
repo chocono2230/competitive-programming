@@ -73,7 +73,7 @@ function f_mkcdh() {
 }
 
 alias c='code'
-alias g='g++ -std=gnu++17 -Wall -Wextra -O2 $1'
+alias g='g++ -std=gnu++17 -Wall -Wextra -O2 -DCHOMONOLIS_LOCAL $1'
 alias z='./a.out < in.txt'
 alias ccp='f_ccp'
 alias msenv='f_msenv'
