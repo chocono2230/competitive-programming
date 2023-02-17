@@ -413,17 +413,3 @@ if (p > (xor128() % INF) / (double)INF) {
   ans = nxans;
   make_graph(gr, n, ans);
 }
-
-vector spans(0, vector<tuple<int, int, int, int>>());
-double spans_addtime = 0;
-int fnamecount = 0;
-for (auto &v : spans) {
-  FILE *fp;
-  fnamecount++;
-  string fname = "out" + to_string(fnamecount) + ".txt";
-  fp = fopen(fname.c_str(), "w");
-  for (auto [a, b, c, d] : v) {
-    fprintf(fp, "%d %d %d %d\n", a, b, c, d);
-  }
-  fclose(fp);
-}
