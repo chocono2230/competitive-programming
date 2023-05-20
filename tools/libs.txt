@@ -138,6 +138,66 @@ struct UnionFind_hv {
   int size(int x) { return -d.at(find(x)); }
 };
 
+// 問題に合わせた調整が必要。
+// 経路圧縮せず、直前のクエリを記憶する方針
+// ABC302 Ex参考
+struct RemovableUnionFind {
+  map<int, vector<int>> memo;
+  vector<int> d;
+  vector<int> edge;
+  int qe = 0;
+  UnionFind(int n) : d(n, -1), edge(n, 0) {}
+  int find(int x) {
+    if (d.at(x) < 0) return x;
+    return find(d.at(x));
+  }
+  int unite(int x, int y) {
+    static int query_count = 0;
+    x = find(x);
+    y = find(y);
+    if (x == y) {
+      vector<int> mv = {0, x, 0};
+      int bq = min(edge.at(x), size(x));
+      edge.at(x)++;
+      int aq = min(edge.at(x), size(x));
+      mv.back() = aq - bq;
+      qe += mv.back();
+      memo[query_count] = mv;
+      return query_count++;
+    }
+    if (d.at(x) > d.at(y)) swap(x, y);
+    int bq = min(edge.at(x), size(x)) + min(edge.at(y), size(y));
+    vector<int> mv = {1, x, y, d.at(y), 0};
+    d.at(x) += d.at(y);
+    edge.at(x) += edge.at(y) + 1;
+    d.at(y) = x;
+    int aq = min(edge.at(x), size(x));
+    mv.back() = aq - bq;
+    qe += mv.back();
+    memo[query_count] = mv;
+    return query_count++;
+  }
+  void remove(int qc) {
+    auto v = memo[qc];
+    assert(!v.empty());
+    if (v.front() == 0) {
+      assert(v.size() == 3);
+      qe -= v.back();
+      edge.at(v.at(1))--;
+      return;
+    }
+    assert(v.size() == 5);
+    int x = v.at(1), y = v.at(2), dd = v.at(3), qd = v.at(4);
+    qe -= qd;
+    d.at(y) = dd;
+    edge.at(x) -= edge.at(y) + 1;
+    d.at(x) -= d.at(y);
+  }
+  int get_qe() { return qe; }
+  bool same(int x, int y) { return find(x) == find(y); }
+  int size(int x) { return -d.at(find(x)); }
+};
+
 // 点と線分の距離
 double pointline_distance(double x, double y, double x1, double y1, double x2,
                           double y2) {
