@@ -399,8 +399,8 @@ struct combination {
 };
 
 LCAセット(30固定) {
-  void dfs(vector<vector<int>> & tree, vector<vector<int>> & par,
-           vector<int> & lv, int now) {
+  void dfs(vector<vector<int>> &tree, vector<vector<int>> &par,
+           vector<int> &lv, int now) {
     for (auto nx : tree.at(now)) {
       if (lv.at(nx) != -1) continue;
       lv.at(nx) = lv.at(now) + 1;
@@ -409,7 +409,7 @@ LCAセット(30固定) {
     }
   }
 
-  int lca(vector<int> & dlv, vector<vector<int>> & par, int u, int v) {
+  int lca(vector<int> &dlv, vector<vector<int>> &par, int u, int v) {
     const int SZ = 30;
     if (dlv.at(u) < dlv.at(v)) swap(u, v);
     rep(i, SZ) {
