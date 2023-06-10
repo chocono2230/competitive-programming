@@ -74,6 +74,31 @@ ll modPow(ll a, ll n, ll p) {
   return (t * t) % p;
 }
 
+// 行列積
+vector<vector<mint>> matrix_mul(const vector<vector<mint>> &p,
+                                const vector<vector<mint>> &q) {
+  const int n = p.size();
+  vector res(n, vector<mint>(n, 0));
+  rep(k, n) rep(i, n) rep(j, n) {
+    res.at(i).at(j) += p.at(i).at(k) * q.at(k).at(j);
+  }
+  return res;
+}
+
+// 行列累乗
+vector<vector<mint>> matrix_exp(const vector<vector<mint>> &now, ll lv) {
+  const int n = now.size();
+  if (lv == 0) {
+    vector res(n, vector<mint>(n, 0));
+    rep(i, n) res.at(i).at(i) = 1;
+    return res;
+  }
+  if (lv == 1) return now;
+  if (lv % 2 == 1) return matrix_mul(now, matrix_exp(now, lv - 1));
+  auto r = matrix_exp(now, lv / 2);
+  return matrix_mul(r, r);
+}
+
 // 拡張ユークリッド互除法。a*x+b*y = g となるx,y,gを返す。
 // 制約 a > b 返り値yの符号注意
 ll extgcd(ll a, ll b, ll &x, ll &y) {
