@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     exit(1);
   }
   z = stoi(argv[1]);
-  cerr << z << endl;
+  cerr << "Random Seed : " << z << endl;
   int co = stoi(argv[2]);
   rep(_i, 10) xor128();
   rep(i, co) { cout << xor128() % INT_MAX << endl; }

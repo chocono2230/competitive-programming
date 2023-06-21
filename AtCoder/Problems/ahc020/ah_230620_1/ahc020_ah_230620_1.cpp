@@ -260,6 +260,8 @@ int main() {
     cerr << r.first << " " << r.second << " " << dbg_loop << " "
          << time_from_clock() << endl;
     cerr << es << " " << ps << " " << es - ps << endl;
+    cerr << "artifacts:score:" << (ll)round(r.second) << endl;
+    cerr << "artifacts:loop_count:" << dbg_loop << endl;
     cerr << (ll)round(r.second) << endl;
   }
   return 0;
