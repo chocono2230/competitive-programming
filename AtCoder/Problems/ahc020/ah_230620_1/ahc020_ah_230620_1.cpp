@@ -202,6 +202,19 @@ int main() {
   double mxs = 0;
   int dbg_loop = 0;
 
+  vector p_base(K, vector<pair<double, int>>());
+  rep(i, K) {
+    vector<pair<double, int>> v;
+    auto [a, b] = ab.at(i);
+    rep(j, N) {
+      double d = hypot(xy.at(j).first - a, xy.at(j).second - b);
+      if (d >= P_MAX) continue;
+      v.push_back({d, j});
+    }
+    sort(ALL(v));
+    p_base.at(i) = v;
+  }
+
   while (time_from_clock() < time_limit) {
     dbg_loop++;
     vector<int> p(N, 0);
@@ -212,17 +225,14 @@ int main() {
       auto [x1, y1] = ab.at(ki);
       double mn = 1e18;
       int mni = 0;
-      rep(i, N) {
-        auto [x, y] = xy.at(i);
-        double d = hypot(x - x1, y - y1);
-        if (p.at(i) >= d) {
+      for (auto [d, idx] : p_base.at(ki)) {
+        if (p.at(idx) >= d) {
           mni = -1;
           break;
         }
-        if (d >= P_MAX) continue;
-        if (d - p.at(i) < mn) {
-          mn = d - p.at(i);
-          mni = i;
+        if (d - p.at(idx) < mn) {
+          mn = d - p.at(idx);
+          mni = idx;
         }
       }
       if (mni == -1) continue;

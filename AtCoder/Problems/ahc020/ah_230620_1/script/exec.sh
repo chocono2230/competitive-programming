@@ -6,11 +6,11 @@ if [ $# != 1 ]; then
     exit 1
 fi
 
-f=./tools/in/$(printf "%04d" $1).txt
+f=./sh_input/$(printf "%04d" $1).txt
 head -n 1 $f
 cat $f > ./in.txt
 
-z=`pwd`/past/v1.cpp
+z=`pwd`/past/v2.cpp
 g++ -std=gnu++17 -Wall -Wextra -O2 -DCHOMONOLIS_LOCAL -DCHOCONO_LOCAL $z
 cat ./in.txt | ./a.out > output.txt
 

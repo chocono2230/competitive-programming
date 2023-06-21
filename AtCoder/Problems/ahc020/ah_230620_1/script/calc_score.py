@@ -16,6 +16,8 @@ for i in range(len(now_result)):
     print(
         now_result[i]["case"],
         now_result[i]["score"],
+        now_result[i]["loop_count"],
     )
     sc += now_result[i]["score"]
 print("total score:", sc)
+print("300 scale: " + str(sc * 300 / len(now_result)))

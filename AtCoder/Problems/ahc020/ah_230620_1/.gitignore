@@ -1,5 +1,4 @@
 past/
 tools/
-sh_work/
-sh_artifacts/
+sh_*/
 output.txt
