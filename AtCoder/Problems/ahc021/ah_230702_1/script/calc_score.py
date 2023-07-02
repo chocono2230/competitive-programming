@@ -32,10 +32,11 @@ now_result = ld("./sh_artifacts/result.txt")
 sc = 0
 for i in range(len(now_result)):
     print(
-        "case: %d, score: %f, loop_count: %d" % (
+        "case: %d, score: %d, loop_count: %d, time: %f" % (
         now_result[i]["case"],
         now_result[i]["score"],
-        now_result[i]["loop_count"])
+        now_result[i]["loop_count"],
+        now_result[i]["time"])
     )
     sc += now_result[i]["score"]
 print("total score:", sc)
