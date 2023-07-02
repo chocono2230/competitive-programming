@@ -36,7 +36,7 @@ for i in range(len(now_result)):
         now_result[i]["case"],
         now_result[i]["score"],
         now_result[i]["loop_count"],
-        now_result[i]["time"])
+        now_result[i]["tt"])
     )
     sc += now_result[i]["score"]
 print("total score:", sc)

@@ -18,7 +18,7 @@ const bool local = false;
 const int N = 30;
 const int MX = 465;
 const int INF = 1001001001;
-const int BEAM_SIZE = 500;
+const int BEAM_SIZE = 150;
 vector B(N, vector<int>());
 
 const clock_t start_time = clock();
@@ -303,6 +303,28 @@ vector<tuple<int, int, int, int>> solve() {
       solve_opr(now, s, nxs);
       stateMap.erase(idx);
     }
+
+    [&] {
+      map<vector<int>, State> cv;
+      for (auto &s : nxs) {
+        vector<int> chk;
+        rep(i, N) rep(j, i + 1) {
+          if (s.table.at(p2idx(i, j)) <= now) {
+            chk.push_back(p2idx(i, j));
+          }
+        }
+        sort(ALL(chk));
+        auto itr = cv.find(chk);
+        if (itr == cv.end() || itr->second.score > s.score) {
+          cv[chk] = s;
+        }
+      }
+      nxs.clear();
+      for (auto p : cv) {
+        nxs.push_back(p.second);
+      }
+    }();
+
     sort(ALL(nxs), [](const State &l, const State &r) -> bool {
       return l.score < r.score;
     });
@@ -332,7 +354,7 @@ int main() {
     cerr << "artifacts:score:" << r << endl;
     cerr << "artifacts:loop_count:" << dbg_loop << endl;
     cerr << "artifacts:K:" << ans.size() << endl;
-    cerr << "artifacts:time:" << time_from_clock() << endl;
+    cerr << "artifacts:tt:" << time_from_clock() << endl;
   }
   return 0;
 }
