@@ -66,6 +66,22 @@ vector<bool> make_prime_bool_vec(int lim) {
   return chk;
 }
 
+vector<int> eulers_totient_function(int lim) {
+  vector<int> res(lim, 0);
+  rep(i, res.size()) { res.at(i) = i; }
+  auto pv = make_prime_bool_vec(lim);
+  rep(i, pv.size()) {
+    if (!pv.at(i)) continue;
+    int now = i;
+    while (now < (int)res.size()) {
+      res.at(now) /= i;
+      res.at(now) *= (i - 1);
+      now += i;
+    }
+  }
+  return res;
+}
+
 ll modPow(ll a, ll n, ll p) {
   if (n == 0) return 1;  // 0乗にも対応する場合
   if (n == 1) return a % p;
