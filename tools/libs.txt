@@ -150,7 +150,8 @@ struct UnionFind {
 };
 
 struct UnionFind_hv {
-  vector<int> d, weight;
+  vector<int> d;
+  vector<ll> weight;
   UnionFind_hv(int n) : d(n, -1), weight(n, 0) {}
   int find(int x) {
     if (d.at(x) < 0) return x;
@@ -158,12 +159,12 @@ struct UnionFind_hv {
     weight.at(x) += weight.at(d.at(x));
     return d.at(x) = ret;
   }
-  int get_weight(int x) {
+  ll get_weight(int x) {
     find(x);
     return weight.at(x);
   }
-  int diff(int x, int y) { return weight.at(y) - weight.at(x); }
-  bool unite(int x, int y, int w) {
+  ll diff(int x, int y) { return weight.at(y) - weight.at(x); }
+  bool unite(int x, int y, ll w) {
     w += weight.at(x);
     w -= weight.at(y);
     x = find(x);
