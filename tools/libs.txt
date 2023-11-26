@@ -375,7 +375,7 @@ struct FenwickTree {  //入力は0インデックス
   }
 };
 
-// 区間pair
+// 区間pair(区間追加と区間削除は未検証)
 struct IntervalPair {
   const ll INF = 8e18;
   set<pair<ll, ll>> se;
