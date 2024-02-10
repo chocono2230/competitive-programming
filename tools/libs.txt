@@ -116,16 +116,14 @@ vector<vector<mint>> matrix_exp(const vector<vector<mint>> &now, ll lv) {
 }
 
 // 拡張ユークリッド互除法。a*x+b*y = g となるx,y,gを返す。
-// 制約 a > b 返り値yの符号注意
+// 返り値gxyの符号注意
 ll extgcd(ll a, ll b, ll &x, ll &y) {
   if (b == 0) {
     x = 1, y = 0;
     return a;
   }
-  ll g = extgcd(b, a % b, x, y);
-  ll xt = x;
-  x = y;
-  y = xt - a / b * y;
+  ll g = extgcd(b, a % b, y, x);
+  y -= a / b * x;
   return g;
 }
 
