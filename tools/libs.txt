@@ -516,6 +516,88 @@ struct combination {
   }
 };
 
+// 動的mod
+// 同じmodではない場合の挙動は未定義
+// mod 0 は単位元としての挙動をする(セグ木対応)
+struct DynamicMint {
+  int mod;
+  ll x;
+  DynamicMint(int mod = 0, ll x = 0) : mod(mod), x(x) {
+    if (mod != 0) {
+      x = (x % mod + mod) % mod;
+    }
+  }
+  bool operator==(const DynamicMint &a) const { return x == a.x; }
+  DynamicMint operator-() const { return DynamicMint(mod, -x); }
+  DynamicMint &operator+=(const DynamicMint a) {
+    if (mod == 0) {
+      x = a.x;
+      mod = a.mod;
+      return *this;
+    }
+    if (a.mod == 0) return *this;
+    if ((x += a.x) >= mod) x -= mod;
+    return *this;
+  }
+  DynamicMint &operator-=(const DynamicMint a) {
+    if (mod == 0) {
+      x = a.x;
+      mod = a.mod;
+      return *this;
+    }
+    if (a.mod == 0) return *this;
+    if ((x += mod - a.x) >= mod) x -= mod;
+    return *this;
+  }
+  DynamicMint &operator*=(const DynamicMint a) {
+    if (mod == 0) {
+      x = a.x;
+      mod = a.mod;
+      return *this;
+    }
+    if (a.mod == 0) return *this;
+    (x *= a.x) %= mod;
+    return *this;
+  }
+  DynamicMint operator+(const DynamicMint a) const {
+    DynamicMint res(*this);
+    return res += a;
+  }
+  DynamicMint operator-(const DynamicMint a) const {
+    DynamicMint res(*this);
+    return res -= a;
+  }
+  DynamicMint operator*(const DynamicMint a) const {
+    DynamicMint res(*this);
+    return res *= a;
+  }
+  DynamicMint pow(ll t) const {
+    if (!t) return 1;
+    DynamicMint a = pow(t >> 1);
+    a *= a;
+    if (t & 1) a *= *this;
+    return a;
+  }
+
+  // for prime mod
+  DynamicMint inv() const { return pow(mod - 2); }
+  DynamicMint &operator/=(const DynamicMint a) {
+    if (mod == 0) {
+      x = a.x;
+      mod = a.mod;
+      return *this;
+    }
+    if (a.mod == 0) return *this;
+    return (*this) *= a.inv();
+  }
+  DynamicMint operator/(const DynamicMint a) const {
+    DynamicMint res(*this);
+    return res /= a;
+  }
+};
+
+// ローリングハッシュ+セグ木+動的modについてはabc331-F参照
+
 LCAセット(30固定) {
   void dfs(vector<vector<int>> &tree, vector<vector<int>> &par,
            vector<int> &lv, int now) {
