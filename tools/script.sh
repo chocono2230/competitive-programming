@@ -72,6 +72,6 @@ function mkcdh() {
     code $ff
 }
 
-alias c='code'
+alias co='code'
 alias g='g++ -std=gnu++20 -Wall -Wextra -O2 -DCHOMONOLIS_LOCAL -DCHOCONO_LOCAL $1'
 alias z='./a.out < in.txt'
